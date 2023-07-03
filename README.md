@@ -2,6 +2,11 @@
 
 bilibili 直播弹幕 golang 库
 
+
+### ChangeLog
+
+在NewClient中添加enterUID参数，对应NewEnterPacket中的UID，可以为0.
+
 ## 安装
 ```shell
 go get github.com/Akegarasu/blivedm-go

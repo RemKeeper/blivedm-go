@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/Akegarasu/blivedm-go/client"
-	_ "github.com/Akegarasu/blivedm-go/utils"
+	"github.com/HowardLeo505/blivedm-go/client"
+	_ "github.com/HowardLeo505/blivedm-go/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )
@@ -14,7 +14,7 @@ var dumps = []string{"GUARD_BUY", "USER_TOAST_MSG"}
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	c := client.NewClient(roomId)
+	c := client.NewClient(roomId, "0")
 	for _, v := range dumps {
 		vv := v
 		c.RegisterCustomEventHandler(vv, func(s string) {
