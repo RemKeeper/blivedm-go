@@ -18,6 +18,7 @@ type Client struct {
 	roomID              string
 	tempID              string
 	enterUID            string
+	buvid               string
 	token               string
 	host                string
 	hostList            []string
@@ -28,11 +29,12 @@ type Client struct {
 }
 
 // NewClient 创建一个新的弹幕 client
-func NewClient(roomID string, enterUID string) *Client {
+func NewClient(roomID string, enterUID string, buvid string) *Client {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Client{
 		tempID:              roomID,
 		enterUID:            enterUID,
+		buvid:               buvid,
 		eventHandlers:       &eventHandlers{},
 		customEventHandlers: &customEventHandlers{},
 		done:                ctx.Done(),
@@ -83,6 +85,10 @@ retry:
 	res.Body.Close()
 	if err = c.sendEnterPacket(); err != nil {
 		log.Errorf("failed to send enter packet, retry %d times", retryCount)
+		goto retry
+	}
+	if _, _, err = c.conn.ReadMessage(); fmt.Sprintf("%+v", err) == "websocket: close 1006 (abnormal closure): unexpected EOF" {
+		log.Info("request server busy, retrying other server")
 		goto retry
 	}
 	return nil
@@ -164,7 +170,7 @@ func (c *Client) sendEnterPacket() error {
 	if err != nil {
 		return errors.New("error enterUID")
 	}
-	pkt := packet.NewEnterPacket(uid, rid, c.token)
+	pkt := packet.NewEnterPacket(uid, c.buvid, rid, c.token)
 	if err = c.conn.WriteMessage(websocket.BinaryMessage, pkt); err != nil {
 		return err
 	}
