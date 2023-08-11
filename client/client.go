@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -19,6 +20,8 @@ type Client struct {
 	tempID              string
 	enterUID            string
 	buvid               string
+	userAgent           string
+	referer             string
 	token               string
 	host                string
 	hostList            []string
@@ -29,12 +32,14 @@ type Client struct {
 }
 
 // NewClient 创建一个新的弹幕 client
-func NewClient(roomID string, enterUID string, buvid string) *Client {
+func NewClient(roomID string, enterUID string, buvid string, userAgent string, referer string) *Client {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Client{
 		tempID:              roomID,
 		enterUID:            enterUID,
 		buvid:               buvid,
+		userAgent:           userAgent,
+		referer:             referer,
 		eventHandlers:       &eventHandlers{},
 		customEventHandlers: &customEventHandlers{},
 		done:                ctx.Done(),
@@ -69,13 +74,30 @@ func (c *Client) init() error {
 	return nil
 }
 
+func (c *Client) getHeader() http.Header {
+	if c.userAgent == "" && c.referer == "" {
+		return nil
+	}
+
+	header := http.Header{}
+
+	if c.userAgent != "" {
+		header.Set("User-Agent", c.userAgent)
+	}
+	if c.referer != "" {
+		header.Set("Referer", c.referer)
+	}
+	return header
+}
+
 func (c *Client) connect() error {
 	retryCount := 0
 retry:
 	// 随着重连会自动切换弹幕服务器
 	c.host = c.hostList[retryCount%len(c.hostList)]
 	retryCount++
-	conn, res, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://%s/sub", c.host), nil)
+	header := c.getHeader()
+	conn, res, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://%s/sub", c.host), header)
 	if err != nil {
 		log.Errorf("connect dial failed, retry %d times", retryCount)
 		time.Sleep(2 * time.Second)

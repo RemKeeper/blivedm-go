@@ -2,10 +2,16 @@
 
 bilibili 直播弹幕 golang 库
 
+---
+
+## 此仓库为原仓库的Fork仓库，根据个人需求做了一些修改
+**从原仓库的[#f56426f](https://github.com/Akegarasu/blivedm-go/commit/f56426ffa70926176d95db50f699911e734040c0) 提交开始本仓库与原仓库不再同步。**
 
 ### ChangeLog
+在NewClient中添加enterUID,buvid参数，对应NewEnterPacket中的UID和buvid，UID可以为0，buvid传入空字符串即可.  
+在NewClient方法中添加userAgent, referer参数，对应WS连接升级前HTTP请求头中的User-Agent和Referer字段，可以传入空字符串，传空字符串默认请求头中**不带**对应字段.
 
-在NewClient中添加enterUID参数，对应NewEnterPacket中的UID，可以为0.
+---
 
 ## 安装
 ```shell
@@ -38,7 +44,7 @@ import (
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	c := client.NewClient("732")
+	c := client.NewClient("732", "0", "", "", "")
 	//弹幕事件
 	c.OnDanmaku(func(danmaku *message.Danmaku) {
 		if danmaku.Type == message.EmoticonDanmaku {
