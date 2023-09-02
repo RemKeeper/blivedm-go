@@ -1,4 +1,4 @@
-module github.com/HowardLeo505/blivedm-go
+module github.com/RemKeeper/blivedm-go
 
 go 1.16
 
