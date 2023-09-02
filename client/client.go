@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/HowardLeo505/blivedm-go/api"
-	"github.com/HowardLeo505/blivedm-go/packet"
+	"github.com/RemKeeper/blivedm-go/api"
+	"github.com/RemKeeper/blivedm-go/packet"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 )

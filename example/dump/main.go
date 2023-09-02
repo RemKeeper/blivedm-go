@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/HowardLeo505/blivedm-go/client"
-	_ "github.com/HowardLeo505/blivedm-go/utils"
+	"github.com/RemKeeper/blivedm-go/client"
+	_ "github.com/RemKeeper/blivedm-go/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )
